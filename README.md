@@ -1,68 +1,45 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<!-- https://medium.com/jstack-eu/using-mobx-decorators-in-create-react-app-v3-27f7b1afa1c7
+ -->
 
-## Available Scripts
+Installing Mobx
+First we want to install the mobx dependencies:
+<!-- npm install mobx mobx-react -->
+Mobx: state management library itself
+Mobx-react: bindings to make sure it works perfectly in React
+Enabling decorators
+To enable decorators in CRA, we will need two dependencies:
+customize-cra: makes sure we can tweak the CRA webpack config
+react-app-rewired: needed by customize-cra, it will leverage this dependency under the hood
+Install these dependencies:
+<!-- npm install --dev customize-cra react-app-rewired -->
+Next step is to make sure react-app-rewired is used, add following scripts to the package.json:
+// instead of react-scripts start
+<!-- "start": "react-app-rewired start", -->
+// instead of react-scripts build
+<!-- "build": "react-app-rewired build" -->
+Now we need to add config-overrides.js in the base project to enable the decorator support within CRA.
+<!-- const {addDecoratorsLegacy, useEslintRc, override} = require('customize-cra');
 
-In the project directory, you can run:
+module.exports = override(
+    addDecoratorsLegacy(),
+    useEslintRc('./.eslintrc')
+); -->
+The final step is to make sure that our Eslint support decorators. Add following content to a new .eslintrc file (in the base project folder)
+<!-- {
+  "extends": "react-app",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "legacyDecorators": true
+    }
+  }
+} -->
+Testing if it works!
+Check if decorators are working by adding an example store:
+import {createContext} from 'react';
+import {observable} from 'mobx';
 
-### `npm start`
+class ExampleStore {
+    @observable name = 'test';
+}
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+export default new ExampleStore();
